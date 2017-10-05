@@ -1,0 +1,205 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI; 
+
+public class SaveStateManager : MonoBehaviour 
+{
+	[System.Serializable]
+	public struct SaveState
+	{
+		//public List<GameObject> gameObjects; 
+		//public SavableGameObject[] gameObjects; 
+		public SavableGameObjectData[] gameObjectData; 
+	}
+
+	[System.Serializable]
+	public struct SavableGameObjectData
+	{
+		public GameObject gameObject; 
+		public Vector3 position; 
+		public Quaternion rotation; 
+		public bool enabled; 
+	}
+
+	public GameObject levelParent; 
+
+	public KeyCode saveKey; 
+	public KeyCode jumpBackKey; 
+
+	public int numSaveStates; 
+	public int curSaveState; 
+
+	[SerializeField] SaveState startState; 
+	[SerializeField] SaveState[] saveStates; 
+
+	// UI
+	public Image[] ui_tetherPoints; 
+	public Color ui_pointActiveColor; 
+	public Color ui_pointInactiveColor; 
+	public GameObject curTimeArrow; 
+	public bool arrowReachedPointTarget; 
+
+	public Player player; 
+	Vector3 playerSavedPos; 
+	public bool playerMoved;  
+
+	// Use this for initialization
+	void Start () 
+	{
+		// Create the array with one extra index to store the 0 level-start state
+		saveStates = new SaveState[numSaveStates]; 
+
+		startState = CreateSaveState(); 
+		curSaveState = 0; 
+
+		arrowReachedPointTarget = false; 
+		playerMoved = false; 
+		playerSavedPos = player.transform.position; 
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		if (Input.GetKeyDown(saveKey) && curSaveState < numSaveStates)
+		{
+			saveStates[curSaveState] = CreateSaveState(); 
+
+			// Increment curSaveState index
+			curSaveState++; 
+
+			arrowReachedPointTarget = false; 
+			playerMoved = false; 
+			playerSavedPos = player.transform.position; 
+		}
+
+		if (Input.GetKeyDown(jumpBackKey))
+		{
+			// Decrement curSaveState index
+			if (!playerMoved && curSaveState > 0)
+			{
+				curSaveState--; 
+			}
+
+			if (curSaveState <= 0)
+			{
+				LoadSaveState(startState);
+			}
+			else
+			{
+				Debug.Log("load curSaveState: " + curSaveState); 
+
+				LoadSaveState(saveStates[curSaveState - 1]);
+			}
+
+			arrowReachedPointTarget = false; 
+			playerMoved = false; 
+			playerSavedPos = player.transform.position; 
+
+			player.GetComponent<Rigidbody2D>().velocity = Vector3.zero; 
+		}
+
+
+
+		UpdateUI(); 
+	}
+
+
+	void UpdateUI()
+	{
+		if (ui_tetherPoints.Length > 0)
+		{
+			//ui_tetherPoints[0].color = ui_pointActiveColor; 
+		}
+
+
+		for (int i = 1; i < ui_tetherPoints.Length; i++)
+		{
+			
+			if (i <= curSaveState)
+			{
+				ui_tetherPoints[i].color = ui_pointActiveColor; 
+			}
+			else
+			{
+				ui_tetherPoints[i].color = ui_pointInactiveColor;
+			}
+
+		}
+
+		RectTransform rp = curTimeArrow.GetComponent<RectTransform>(); 
+
+		float xTarget; 
+
+		if (!arrowReachedPointTarget)
+		{
+			xTarget = -675 + (100 * curSaveState); 
+		}
+		else
+		{
+			xTarget = -625 + (100 * curSaveState); 
+		}
+
+		float xLerp = Mathf.Lerp(rp.anchoredPosition.x, xTarget, 0.2f); 
+		rp.anchoredPosition = new Vector2 (xLerp, rp.anchoredPosition.y); 
+
+		if (playerMoved && !arrowReachedPointTarget && Mathf.Abs(rp.anchoredPosition.x - xTarget) < 0.01f)
+		{
+			arrowReachedPointTarget = true; 
+		}
+
+		if (!playerMoved && Vector3.Distance(player.transform.position, playerSavedPos) > 0.1f)
+		{
+			playerMoved = true; 
+		}
+
+	}
+
+	public SaveState CreateSaveState()
+	{
+		SaveState writeState = new SaveState(); 
+
+		// Check for error case
+		if (curSaveState >= numSaveStates)
+		{
+			Debug.LogError("Can't make a save state. All slots filled"); 
+			return writeState; 
+		}
+
+		// Make the save state
+
+		// First, find all gameObjects in the scene with SavableGameObject script; those are affected
+
+		// This searches/compiles all gameObjects each time
+		SavableGameObject[] gs = levelParent.GetComponentsInChildren<SavableGameObject>(); 
+
+		// Set the length of gameObjectData to the length of the number of GameObjects found in gs
+		writeState.gameObjectData = new SavableGameObjectData[gs.Length];
+
+		// For each gameObject found, add their data to the associated SaveableGameObjectData struct
+		for (int i = 0; i < gs.Length; i++)
+		{
+			writeState.gameObjectData[i] = new SavableGameObjectData (); 
+			writeState.gameObjectData[i].gameObject = gs[i].gameObject; 
+			writeState.gameObjectData[i].position = gs[i].transform.position; 
+			writeState.gameObjectData[i].rotation = gs[i].transform.rotation; 
+			writeState.gameObjectData[i].enabled = gs[i].gameObject.activeSelf;
+		}
+
+		return writeState; 
+
+	}
+
+	public void LoadSaveState(SaveState readState)
+	{
+		// Load the saved data
+
+		// Reset gameObjects to previous state
+		foreach (SavableGameObjectData g in readState.gameObjectData)
+		{
+			g.gameObject.transform.position = g.position; 
+			g.gameObject.transform.rotation = g.rotation;  
+			g.gameObject.SetActive(g.enabled); 
+		}
+	}
+}
