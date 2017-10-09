@@ -12,6 +12,7 @@ public class Temp_LevelStateManager : Singleton<Temp_LevelStateManager>
 	public Text codesText; 
 
 	public bool securityAlertActive; 
+	public GameObject alertIcon; 
 
 	// Use this for initialization
 	void Start () 
@@ -31,6 +32,15 @@ public class Temp_LevelStateManager : Singleton<Temp_LevelStateManager>
 			{
 				codesText.text += "(" + i + ") "; 
 			}
+		}
+
+		if (securityAlertActive)
+		{
+			alertIcon.SetActive(true); 
+		}
+		else
+		{
+			alertIcon.SetActive(false); 
 		}
 	}
 

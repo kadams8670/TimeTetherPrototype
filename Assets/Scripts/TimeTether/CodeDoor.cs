@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI; 
 
 [ExecuteInEditMode]
-public class Temp_CodeDoor : MonoBehaviour 
+public class CodeDoor : MonoBehaviour 
 {
 
 	public int codeNum;

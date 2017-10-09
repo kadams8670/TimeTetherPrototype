@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI; 
 
 [ExecuteInEditMode]
-public class Temp_CodePickup : MonoBehaviour 
+public class CodePickup : MonoBehaviour 
 {
 	public int codeNum; 
 	public Text codeText; 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Temp_KeyDoor : MonoBehaviour 
+public class KeyDoor : MonoBehaviour 
 {
 
 	// Use this for initialization
@@ -35,8 +35,6 @@ public class Temp_KeyDoor : MonoBehaviour
 	{
 		if (col.gameObject.CompareTag("Player"))
 		{
-			//Debug.Log("Hit player"); 
-
 			if (Temp_LevelStateManager.inst.playerNumKeys > 0)
 			{
 				Temp_LevelStateManager.inst.playerNumKeys--; 

@@ -13,6 +13,7 @@ public class SaveStateManager : MonoBehaviour
 		// LevelStateManager data
 		public int playerNumKeys; 
 		public bool[] codesFound; 
+		public bool securityAlertActive; 
 	}
 
 	[System.Serializable]
@@ -192,6 +193,8 @@ public class SaveStateManager : MonoBehaviour
 		// LevelStateManager data
 		writeState.playerNumKeys = Temp_LevelStateManager.inst.playerNumKeys; 
 		writeState.codesFound = Temp_LevelStateManager.inst.codesFound; 
+		writeState.securityAlertActive = Temp_LevelStateManager.inst.securityAlertActive; 
+
 
 		return writeState; 
 
@@ -211,5 +214,6 @@ public class SaveStateManager : MonoBehaviour
 
 		// LevelStateManager data
 		Temp_LevelStateManager.inst.playerNumKeys = readState.playerNumKeys; 
+		Temp_LevelStateManager.inst.securityAlertActive = readState.securityAlertActive; 
 	}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Temp_KeyPickup : MonoBehaviour 
+public class KeyPickup : MonoBehaviour 
 {
 	// Used to solve a glitch with the onTriggerEnter triggering twice
 	bool collected = false; 
