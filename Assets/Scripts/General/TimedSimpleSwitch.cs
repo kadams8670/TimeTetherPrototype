@@ -5,7 +5,7 @@ using UnityEngine;
 public class TimedSimpleSwitch : SimpleSwitch 
 {
 	public float useTime; 
-	float useTimer; 
+	[HideInInspector] public float useTimer; 
 
 	public GameObject progressBar; 
 

@@ -8,13 +8,19 @@ public class SaveStateManager : MonoBehaviour
 	[System.Serializable]
 	public struct SaveState
 	{
+		// Basic GameObject data
 		public SavableGameObjectData[] gameObjectData; 
+
+		// Other struct types
+		public TimedSimpleSwitchData[] timedSimpleSwitchData; 
 
 		// LevelStateManager data
 		public int playerNumKeys; 
 		public bool[] codesFound; 
 		public bool securityAlertActive; 
 	}
+
+
 
 	[System.Serializable]
 	public struct SavableGameObjectData
@@ -24,6 +30,20 @@ public class SaveStateManager : MonoBehaviour
 		public Quaternion rotation; 
 		public bool enabled; 
 	}
+
+	[System.Serializable]
+	public struct TimedSimpleSwitchData
+	{
+		public TimedSimpleSwitch timedSimpleSwitch; 
+		public bool activated; 
+		public float useTimer; 
+	}
+
+
+
+
+
+
 
 	public GameObject levelParent; 
 
@@ -46,6 +66,8 @@ public class SaveStateManager : MonoBehaviour
 	public Player player; 
 	Vector3 playerSavedPos; 
 	public bool playerMoved;  
+
+
 
 	// Use this for initialization
 	void Start () 
@@ -158,6 +180,8 @@ public class SaveStateManager : MonoBehaviour
 
 	}
 
+
+
 	public SaveState CreateSaveState()
 	{
 		SaveState writeState = new SaveState(); 
@@ -190,6 +214,23 @@ public class SaveStateManager : MonoBehaviour
 		}
 
 
+
+		// Do something similar for timed switches
+		TimedSimpleSwitch[] ts = levelParent.GetComponentsInChildren<TimedSimpleSwitch>(); 
+
+		writeState.timedSimpleSwitchData = new TimedSimpleSwitchData[ts.Length]; 
+
+		for (int i = 0; i < ts.Length; i++)
+		{
+			writeState.timedSimpleSwitchData[i] = new TimedSimpleSwitchData (); 
+			writeState.timedSimpleSwitchData[i].timedSimpleSwitch = ts[i]; 
+			writeState.timedSimpleSwitchData[i].activated = ts[i].activated;
+			writeState.timedSimpleSwitchData[i].useTimer = ts[i].useTimer; 
+		}
+
+
+
+
 		// LevelStateManager data
 		writeState.playerNumKeys = Temp_LevelStateManager.inst.playerNumKeys; 
 		writeState.codesFound = Temp_LevelStateManager.inst.codesFound; 
@@ -210,6 +251,13 @@ public class SaveStateManager : MonoBehaviour
 			g.gameObject.transform.position = g.position; 
 			g.gameObject.transform.rotation = g.rotation;  
 			g.gameObject.SetActive(g.enabled); 
+		}
+
+		// Reset timed simple switches
+		foreach (TimedSimpleSwitchData t in readState.timedSimpleSwitchData)
+		{
+			t.timedSimpleSwitch.activated = t.activated; 
+			t.timedSimpleSwitch.useTimer = t.useTimer; 
 		}
 
 		// LevelStateManager data
