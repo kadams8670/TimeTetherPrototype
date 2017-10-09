@@ -23,6 +23,15 @@ public class Temp_LevelStateManager : Singleton<Temp_LevelStateManager>
 	void Update () 
 	{
 		keyText.text = "x" + playerNumKeys; 
+
+		codesText.text = ""; 
+		for (int i = 0; i < codesFound.Length; i++)
+		{
+			if (codesFound[i])
+			{
+				codesText.text += "(" + i + ") "; 
+			}
+		}
 	}
 
 	public void SetAlertState(bool newState)

@@ -15,6 +15,7 @@ public class Temp_KeyDoor : MonoBehaviour
 		
 	}
 
+	/*
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		if (col.CompareTag("Player"))
@@ -28,12 +29,13 @@ public class Temp_KeyDoor : MonoBehaviour
 			}
 		}
 	}
+	*/ 
 
 	void OnCollisionEnter2D(Collision2D col)
 	{
 		if (col.gameObject.CompareTag("Player"))
 		{
-			Debug.Log("Hit player"); 
+			//Debug.Log("Hit player"); 
 
 			if (Temp_LevelStateManager.inst.playerNumKeys > 0)
 			{
