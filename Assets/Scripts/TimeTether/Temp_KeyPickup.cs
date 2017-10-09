@@ -28,4 +28,5 @@ public class Temp_KeyPickup : MonoBehaviour
 			gameObject.SetActive(false); 
 		}
 	}
+
 }
