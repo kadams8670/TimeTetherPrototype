@@ -8,9 +8,11 @@ public class SaveStateManager : MonoBehaviour
 	[System.Serializable]
 	public struct SaveState
 	{
-		//public List<GameObject> gameObjects; 
-		//public SavableGameObject[] gameObjects; 
 		public SavableGameObjectData[] gameObjectData; 
+
+		// LevelStateManager data
+		public int playerNumKeys; 
+		public bool[] codesFound; 
 	}
 
 	[System.Serializable]
@@ -186,6 +188,11 @@ public class SaveStateManager : MonoBehaviour
 			writeState.gameObjectData[i].enabled = gs[i].gameObject.activeSelf;
 		}
 
+
+		// LevelStateManager data
+		writeState.playerNumKeys = Temp_LevelStateManager.inst.playerNumKeys; 
+		writeState.codesFound = Temp_LevelStateManager.inst.codesFound; 
+
 		return writeState; 
 
 	}
@@ -201,5 +208,8 @@ public class SaveStateManager : MonoBehaviour
 			g.gameObject.transform.rotation = g.rotation;  
 			g.gameObject.SetActive(g.enabled); 
 		}
+
+		// LevelStateManager data
+		Temp_LevelStateManager.inst.playerNumKeys = readState.playerNumKeys; 
 	}
 }
