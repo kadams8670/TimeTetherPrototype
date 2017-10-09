@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class KeyDoor : MonoBehaviour 
 {
+	// Used to solve a glitch with the onTriggerEnter triggering twice
+	bool collected = false; 
 
 	// Use this for initialization
 	void Start () {
@@ -11,8 +13,9 @@ public class KeyDoor : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update () 
+	{
+		collected = false; 
 	}
 
 	/*
@@ -33,10 +36,11 @@ public class KeyDoor : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D col)
 	{
-		if (col.gameObject.CompareTag("Player"))
+		if (col.gameObject.CompareTag("Player") && !collected)
 		{
 			if (Temp_LevelStateManager.inst.playerNumKeys > 0)
 			{
+				collected = true;
 				Temp_LevelStateManager.inst.playerNumKeys--; 
 				gameObject.SetActive(false); 
 			}
