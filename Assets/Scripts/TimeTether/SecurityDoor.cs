@@ -7,6 +7,8 @@ public class SecurityDoor : MonoBehaviour
 	SpriteRenderer rend; 
 	BoxCollider2D col; 
 
+	public bool invertState; 
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -17,17 +19,33 @@ public class SecurityDoor : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Temp_LevelStateManager.inst.securityAlertActive)
+		if (!invertState)
 		{
-			//gameObject.SetActive(true); 
-			rend.enabled = true; 
-			col.enabled = true; 
+			if (Temp_LevelStateManager.inst.securityAlertActive)
+			{
+				//gameObject.SetActive(true); 
+				rend.enabled = true; 
+				col.enabled = true; 
+			}
+			else
+			{
+				//gameObject.SetActive(false); 
+				rend.enabled = false; 
+				col.enabled = false; 
+			}
 		}
 		else
 		{
-			//gameObject.SetActive(false); 
-			rend.enabled = false; 
-			col.enabled = false; 
+			if (Temp_LevelStateManager.inst.securityAlertActive)
+			{
+				rend.enabled = false; 
+				col.enabled = false; 
+			}
+			else
+			{ 
+				rend.enabled = true; 
+				col.enabled = true; 
+			}
 		}
 	}
 }

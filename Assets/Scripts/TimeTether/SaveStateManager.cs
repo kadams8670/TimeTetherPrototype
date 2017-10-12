@@ -18,6 +18,7 @@ public class SaveStateManager : MonoBehaviour
 		public int playerNumKeys; 
 		public bool[] codesFound; 
 		public bool securityAlertActive; 
+		public float endGoalTimer; 
 	}
 
 
@@ -235,6 +236,7 @@ public class SaveStateManager : MonoBehaviour
 		writeState.playerNumKeys = Temp_LevelStateManager.inst.playerNumKeys; 
 		writeState.codesFound = Temp_LevelStateManager.inst.codesFound; 
 		writeState.securityAlertActive = Temp_LevelStateManager.inst.securityAlertActive; 
+		writeState.endGoalTimer = Temp_LevelStateManager.inst.endGoalTimer; 
 
 
 		return writeState; 
@@ -263,5 +265,6 @@ public class SaveStateManager : MonoBehaviour
 		// LevelStateManager data
 		Temp_LevelStateManager.inst.playerNumKeys = readState.playerNumKeys; 
 		Temp_LevelStateManager.inst.securityAlertActive = readState.securityAlertActive; 
+		Temp_LevelStateManager.inst.endGoalTimer = readState.endGoalTimer; 
 	}
 }

@@ -14,6 +14,9 @@ public class Temp_LevelStateManager : Singleton<Temp_LevelStateManager>
 	public bool securityAlertActive; 
 	public GameObject alertIcon; 
 
+	public float endGoalTimer; 
+	public Text endGoalTimerText; 
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -42,6 +45,21 @@ public class Temp_LevelStateManager : Singleton<Temp_LevelStateManager>
 		{
 			alertIcon.SetActive(false); 
 		}
+
+		if (endGoalTimer > 0)
+		{
+			endGoalTimer -= Time.deltaTime; 
+			if (endGoalTimer <= 0)
+			{
+				endGoalTimer = 0; 
+				SwitchInteract();
+			}
+		}
+
+		if (endGoalTimerText != null)
+		{
+			endGoalTimerText.text = "Goal time left: " + Mathf.FloorToInt(endGoalTimer); 
+		}
 	}
 
 	public void SetAlertState(bool newState)
@@ -49,5 +67,13 @@ public class Temp_LevelStateManager : Singleton<Temp_LevelStateManager>
 		securityAlertActive = newState; 
 
 		// GameObject iteration
+	}
+
+	protected virtual void SwitchInteract()
+	{
+		foreach (Interactable i in GetComponents<Interactable>())
+		{
+			i.OnInteract(); 
+		}
 	}
 }

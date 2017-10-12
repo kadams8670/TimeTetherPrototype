@@ -11,8 +11,12 @@ public class SecurityLaser : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update () 
+	{
+		if (Temp_LevelStateManager.inst.securityAlertActive)
+		{
+			gameObject.SetActive(false); 
+		}
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
