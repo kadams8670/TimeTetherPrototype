@@ -68,7 +68,9 @@ public class SaveStateManager : MonoBehaviour
 	Vector3 playerSavedPos; 
 	public bool playerMoved;  
 
-
+	// Actions
+	public static System.Action OnTetherStateSaved;
+	public static System.Action OnTetherStateLoaded;
 
 	// Use this for initialization
 	void Start () 
@@ -238,6 +240,10 @@ public class SaveStateManager : MonoBehaviour
 		writeState.securityAlertActive = Temp_LevelStateManager.inst.securityAlertActive; 
 		writeState.endGoalTimer = Temp_LevelStateManager.inst.endGoalTimer; 
 
+		if (OnTetherStateSaved != null)
+		{
+			OnTetherStateSaved(); 
+		}
 
 		return writeState; 
 
@@ -266,5 +272,10 @@ public class SaveStateManager : MonoBehaviour
 		Temp_LevelStateManager.inst.playerNumKeys = readState.playerNumKeys; 
 		Temp_LevelStateManager.inst.securityAlertActive = readState.securityAlertActive; 
 		Temp_LevelStateManager.inst.endGoalTimer = readState.endGoalTimer; 
+
+		if (OnTetherStateLoaded != null)
+		{
+			OnTetherStateLoaded(); 
+		}
 	}
 }
