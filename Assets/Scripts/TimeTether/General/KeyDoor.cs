@@ -38,7 +38,14 @@ public class KeyDoor : MonoBehaviour
 	{
 		if (col.gameObject.CompareTag("Player") && !collected)
 		{
-			if (Temp_LevelStateManager.inst.playerNumKeys > 0)
+			if (Temp_LevelStateManager.inst.permKeyFound)
+			{
+				collected = true;
+				Temp_LevelStateManager.inst.permKeyFound = false; 
+				Temp_LevelStateManager.inst.permKeyPickup.Used(); 
+				gameObject.SetActive(false); 
+			}
+			else if (Temp_LevelStateManager.inst.playerNumKeys > 0)
 			{
 				collected = true;
 				Temp_LevelStateManager.inst.playerNumKeys--; 
