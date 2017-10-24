@@ -256,9 +256,10 @@ public class SaveStateManager : MonoBehaviour
 		// Reset gameObjects to previous state
 		foreach (SavableGameObjectData g in readState.gameObjectData)
 		{
-			g.gameObject.transform.position = g.position; 
-			g.gameObject.transform.rotation = g.rotation;  
-			g.gameObject.SetActive(g.enabled); 
+			//g.gameObject.transform.position = g.position; 
+			//g.gameObject.transform.rotation = g.rotation;  
+			//g.gameObject.SetActive(g.enabled); 
+			g.gameObject.GetComponent<SavableGameObject>().SetGameObjectData(g); 
 		}
 
 		// Reset timed simple switches
