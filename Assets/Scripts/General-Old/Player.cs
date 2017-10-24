@@ -6,6 +6,15 @@ using UnityEngine.UI;
 
 public class Player : Controller
 {
+	[SerializeField]
+	private KeyCode up = KeyCode.W;
+	[SerializeField]
+	private KeyCode left = KeyCode.A;
+	[SerializeField]
+	private KeyCode down = KeyCode.S;
+	[SerializeField]
+	private KeyCode right = KeyCode.D;
+
 	private int numberOfInputs;
 	private KeyCode nextButtonNumber;
 
@@ -57,8 +66,8 @@ public class Player : Controller
 		//movement
 		Vector2 movementVector = Vector2.zero;
 
-		float horizontal = Input.GetAxis("Horizontal" + 1);
-		float vertical = Input.GetAxis("Vertical" + 1);
+		float horizontal = Input.GetKey (left) ? -1f : Input.GetKey (right) ? 1f : 0f;
+		float vertical = Input.GetKey (down) ? -1f : Input.GetKey (up) ? 1f : 0f;
 
 		movementVector = new Vector2 (horizontal, vertical);
 
