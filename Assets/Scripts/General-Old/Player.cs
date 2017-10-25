@@ -43,14 +43,13 @@ public class Player : Controller
 	private float maxJumpDistance = 10f;
 	[SerializeField]
 	private float distanceIncrement = 2f;
-	private float currJumpDistance = minJumpDistance;
+	private float currJumpDistance;
 
 	private GameObject jumpTarget;
 
 	/* Instance Methods */
 	public override void Awake ()
 	{
-		canMove = canJump = true;
 		base.Awake ();
 		setState (new BehaviorState("prime", this.updatePrime, this.fixedUpdatePrime, this.lateUpdatePrime));
 
@@ -72,36 +71,62 @@ public class Player : Controller
 		//released jump key, perform the jump
 		if (Input.GetKeyUp (use_ability))
 		{
+			Vector3 dir = transform.up;
+			if (teleportType == JumpMethod.mouse)
+				dir = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
+			
+			RaycastHit2D pathCheck = Physics2D.Raycast (transform.position, dir, currJumpDistance, 1 << LayerMask.NameToLayer("Wall"));
 
+			if (pathCheck.collider == null)
+			{
+				transform.position = new Vector3 (
+					jumpTarget.transform.position.x,
+					jumpTarget.transform.position.y,
+					0f);
+			}
+
+			Destroy (jumpTarget);
+			currJumpDistance = 0f;
 		}
 
 		//holding the jump key, increment distance
-		if (Input.GetKey (use_ability))
+		if (jumpTarget != null && Input.GetKey (use_ability))
 		{
 			currJumpDistance += distanceIncrement * Time.deltaTime;
 			if (currJumpDistance > maxJumpDistance)
 				currJumpDistance = maxJumpDistance;
 
-
+			updateJumpMarker ();
 		}
 
 		//pressed the jump key, init jump state
 		if(Input.GetKeyDown(use_ability))
 		{
 			currJumpDistance = minJumpDistance;
+			GameObject jtPref = Resources.Load<GameObject> ("JumpTarget");
+			jumpTarget = Instantiate<GameObject> (jtPref, transform.position, Quaternion.identity);
 
-			switch (teleportType)
-			{
-			case JumpMethod.direct:
-				
-				break;
-			case JumpMethod.mouse:
-
-				break;
-			}
+			updateJumpMarker ();
 		}
-
-
+	}
+	private void updateJumpMarker()
+	{
+		switch (teleportType)
+		{
+		case JumpMethod.direct:
+			jumpTarget.transform.position = transform.position + transform.up * currJumpDistance;
+			break;
+		case JumpMethod.mouse:
+			Vector3 mp = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 10f));
+			float dist = Vector3.Distance (mp, transform.position);
+			if (dist > currJumpDistance)
+				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * currJumpDistance;
+			else if(dist < minJumpDistance)
+				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * minJumpDistance;
+			else
+				jumpTarget.transform.position = mp;
+			break;
+		}
 	}
 
 	private void fixedUpdatePrime()
@@ -127,5 +152,15 @@ public class Player : Controller
 	private void lateUpdatePrime()
 	{
 
+	}
+
+	public void OnDrawGizmos()
+	{
+		Gizmos.color = Color.blue;
+		Gizmos.DrawWireSphere (transform.position, minJumpDistance);
+		Gizmos.DrawWireSphere (transform.position, maxJumpDistance);
+
+		Gizmos.color = Color.green;
+		Gizmos.DrawWireSphere (transform.position, currJumpDistance);
 	}
 }
