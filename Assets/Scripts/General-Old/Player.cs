@@ -31,6 +31,9 @@ public class Player : Controller
 	[Header("Teleport Ability")]
 	[SerializeField]
 	private KeyCode use_ability;
+	[SerializeField]
+	private float cooldownMax = 2f;
+	private float cooldownCur = 0f;
 
 	public bool canJump = false;
 
@@ -65,6 +68,12 @@ public class Player : Controller
 
 	private void updatePrime()
 	{
+		if (cooldownCur > 0f)
+		{
+			cooldownCur -= Time.deltaTime;
+			return;
+		}
+
 		if (!canJump)
 			return;
 
@@ -83,6 +92,8 @@ public class Player : Controller
 					jumpTarget.transform.position.x,
 					jumpTarget.transform.position.y,
 					0f);
+
+				cooldownCur = cooldownMax;
 			}
 
 			Destroy (jumpTarget);
@@ -152,6 +163,11 @@ public class Player : Controller
 	private void lateUpdatePrime()
 	{
 
+	}
+
+	public float cooldownPercentage()
+	{
+		return cooldownCur / cooldownMax;
 	}
 
 	public void OnDrawGizmos()
