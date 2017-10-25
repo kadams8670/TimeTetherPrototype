@@ -6,6 +6,12 @@ using UnityEngine.UI;
 
 public class Player : Controller
 {
+	/* Instance Vars */
+
+	// A list of the states
+	private BehaviorState[] states;
+
+	[Header("Movement")]
 	[SerializeField]
 	private KeyCode up = KeyCode.W;
 	[SerializeField]
@@ -15,42 +21,44 @@ public class Player : Controller
 	[SerializeField]
 	private KeyCode right = KeyCode.D;
 
-	private int numberOfInputs;
-	private KeyCode nextButtonNumber;
-
-	/* Instance Vars */
-
-	[SerializeField]
-	private KeyCode use_ability;
-
-	// A list of the states
-	private BehaviorState[] states;
+	public bool canMove = true;
 
 	private Vector2 direction;
 
 	[SerializeField]
 	public Stat movespeed = new Stat(0, 0);
 
-	public bool canMove = true;
-
-	// Clone variables
+	[Header("Teleport Ability")]
 	[SerializeField]
-	private float cloneTimer;
-	private Queue<KeyCode> userInputs;
+	private KeyCode use_ability;
+
+	public bool canJump = false;
+
+	public enum JumpMethod { direct, mouse }
+	[SerializeField]
+	private JumpMethod teleportType = JumpMethod.direct;
+	[SerializeField]
+	private float minJumpDistance = 5f;
+	[SerializeField]
+	private float maxJumpDistance = 10f;
+	[SerializeField]
+	private float distanceIncrement = 2f;
+	private float currJumpDistance = minJumpDistance;
+
+	private GameObject jumpTarget;
 
 	/* Instance Methods */
 	public override void Awake ()
 	{
-		canMove = true;
+		canMove = canJump = true;
 		base.Awake ();
 		setState (new BehaviorState("prime", this.updatePrime, this.fixedUpdatePrime, this.lateUpdatePrime));
 
 		direction = Vector2.zero;
 
-		userInputs = new Queue<KeyCode>();
+		jumpTarget = null;
 	}
 
-	// Toggle the special view layers off
 	public void Start()
 	{
 		
@@ -58,7 +66,42 @@ public class Player : Controller
 
 	private void updatePrime()
 	{
-		
+		if (!canJump)
+			return;
+
+		//released jump key, perform the jump
+		if (Input.GetKeyUp (use_ability))
+		{
+
+		}
+
+		//holding the jump key, increment distance
+		if (Input.GetKey (use_ability))
+		{
+			currJumpDistance += distanceIncrement * Time.deltaTime;
+			if (currJumpDistance > maxJumpDistance)
+				currJumpDistance = maxJumpDistance;
+
+
+		}
+
+		//pressed the jump key, init jump state
+		if(Input.GetKeyDown(use_ability))
+		{
+			currJumpDistance = minJumpDistance;
+
+			switch (teleportType)
+			{
+			case JumpMethod.direct:
+				
+				break;
+			case JumpMethod.mouse:
+
+				break;
+			}
+		}
+
+
 	}
 
 	private void fixedUpdatePrime()
