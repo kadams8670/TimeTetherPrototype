@@ -48,7 +48,9 @@ public class StasisBullet : MonoBehaviour
 
 		if (SaveStateManager.inst.CanMakeStasisBubble())
 		{
-			SaveStateManager.inst.stasisBubbles.Add(Instantiate(stasisFieldPrefab, transform.position, Quaternion.identity));
+			GameObject newField = Instantiate(stasisFieldPrefab, transform.position, Quaternion.identity); 
+			SaveStateManager.inst.stasisBubbles.Add(newField);
+			newField.transform.SetParent(col.gameObject.transform); 
 		}
 
 		Destroy(gameObject);
