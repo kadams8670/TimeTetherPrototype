@@ -16,9 +16,16 @@ public class PlayerStatisGun : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetKeyDown(shootKey) && SaveStateManager.inst.CanShootStasis())
+		if (Input.GetKeyDown(shootKey))
 		{
-			Shoot(); 
+			if (SaveStateManager.inst.CanMakeStasisBubble())
+			{
+				Shoot(); 
+			}
+			else
+			{
+				SaveStateManager.inst.ResetStasisBubbles(); 
+			}
 		}
 	}
 

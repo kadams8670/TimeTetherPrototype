@@ -93,7 +93,7 @@ public class SaveStateManager : Singleton<SaveStateManager>
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetKeyDown(saveKey) && curSaveState < numSaveStates)
+		if (Input.GetKeyDown(saveKey) && curSaveState < numSaveStates - stasisBubbles.Count)
 		{
 			saveStates[curSaveState] = CreateSaveState(); 
 
@@ -183,6 +183,12 @@ public class SaveStateManager : Singleton<SaveStateManager>
 		if (!playerMoved && Vector3.Distance(player.transform.position, playerSavedPos) > 0.1f)
 		{
 			playerMoved = true; 
+		}
+
+		// Update ui_tetherPoints to account for stasis
+		for (int i = 0; i < stasisBubbles.Count; i++)
+		{
+			ui_tetherPoints[ui_tetherPoints.Length - 1 - i].color = ui_pointStasisColor; 
 		}
 
 	}
@@ -284,8 +290,26 @@ public class SaveStateManager : Singleton<SaveStateManager>
 		}
 	}
 
-	public bool CanShootStasis()
+	public bool CanMakeStasisBubble()
 	{
-		return true; 
+		int remainingStates = numSaveStates - curSaveState; 
+		remainingStates -= stasisBubbles.Count; 
+
+		if (remainingStates > 0)
+		{
+			return true; 
+		}
+
+		return false; 
+	}
+
+	public void ResetStasisBubbles()
+	{
+		foreach (GameObject bubble in stasisBubbles)
+		{
+			Destroy(bubble); 
+		}
+
+		stasisBubbles.Clear(); 
 	}
 }
