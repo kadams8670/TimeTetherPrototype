@@ -7,8 +7,9 @@ public class GhostForm : MonoBehaviour
 	public bool formActive = false;
 	public KeyCode useKey;
 	public float duration = 5f;
-	private float timer = 0;
-
+	public float timer = 0;
+	public GameObject shell;
+	private GameObject spawnedShell;
 
 	// Use this for initialization
 	void Start () 
@@ -23,7 +24,7 @@ public class GhostForm : MonoBehaviour
 			Shift ();
 		if(formActive)
 		{
-			timer--;
+			timer-=Time.deltaTime;
 			if(timer <= 0)
 			{
 				ShiftFromGhost ();
@@ -44,7 +45,9 @@ public class GhostForm : MonoBehaviour
 		gameObject.layer = 14;
 		timer = duration;
 		formActive = true;
-		gameObject.GetComponent<SpriteRenderer> ().color = new Color(0.25f, 1f, 0.6f, 0.2f);
+		//new Color(0.25f, 1f, 0.6f, 0.2f);
+		gameObject.GetComponent<SpriteRenderer> ().color = new Color(0.25f, 1f, 0.6f, 0.2f);;
+		spawnedShell = Instantiate (shell, transform.position, transform.rotation, transform.parent);
 	}
 
 	void ShiftFromGhost()
@@ -53,5 +56,6 @@ public class GhostForm : MonoBehaviour
 		timer = 0;
 		formActive = false;
 		gameObject.GetComponent<SpriteRenderer> ().color = Color.green;
+		Destroy (spawnedShell);
 	}
 }
