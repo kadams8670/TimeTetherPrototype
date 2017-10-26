@@ -47,7 +47,7 @@ public class SaveStateManager : Singleton<SaveStateManager>
 	public enum TetherType
 	{
 		TIME_TETHER,
-		JUMP_TETHER
+		OTHERWORLD
 	};
 
 	public TetherType tetherType; 
@@ -99,6 +99,16 @@ public class SaveStateManager : Singleton<SaveStateManager>
 	// Update is called once per frame
 	void Update () 
 	{
+		if (tetherType == TetherType.TIME_TETHER)
+		{
+			CheckSaveLoadStateKeys(); 
+		}
+
+		UpdateUI(); 
+	}
+
+	void CheckSaveLoadStateKeys()
+	{
 		if (Input.GetKeyDown(saveKey) && curSaveState < numSaveStates - stasisBubbles.Count)
 		{
 			saveStates[curSaveState] = CreateSaveState(); 
@@ -136,10 +146,6 @@ public class SaveStateManager : Singleton<SaveStateManager>
 
 			player.GetComponent<Rigidbody2D>().velocity = Vector3.zero; 
 		}
-
-
-
-		UpdateUI(); 
 	}
 
 
