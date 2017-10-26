@@ -25,9 +25,8 @@ public class EnemyAI_Patrol : MonoBehaviour
 	public float waitAtPoint;
 	//write rotation of guard while stationary 
 	public int rotateGuardSpeed;
-	public float RotateSpeedMultiplier;
 	private float curTime;
-	public float pauseDuration;
+	public float wapypointPauseDuration;
 	public float timeToNextRotate;
 
 	Vector3 wanderTarget;
@@ -39,7 +38,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 		otherAI = gameObject.GetComponent<GuardAI> ();
 		currentPatrolIndex = 0;
 		currentPatrolPoint = patrolPoints[currentPatrolIndex];
-		StartCoroutine(RotateObject(rotateGuardSpeed, Vector3.forward, RotateSpeedMultiplier));
+		StartCoroutine(RotateObject(rotateGuardSpeed, Vector3.forward, 1));
 	}
 
 	// Update is called once per frame
@@ -104,7 +103,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 					currentPatrolIndex++;
 					if (currentPatrolIndex == patrolPoints.Length && canLoop)
 						currentPatrolIndex = 0;
-					curTime = pauseDuration;
+					curTime = wapypointPauseDuration;
 				}
 				currentPatrolPoint = patrolPoints[currentPatrolIndex];
 
@@ -125,7 +124,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 					currentPatrolIndex++;
 					if (currentPatrolIndex == patrolPoints.Length)
 						currentPatrolIndex--;
-					curTime = pauseDuration;
+					curTime = wapypointPauseDuration;
 				}
 				currentPatrolPoint = patrolPoints[currentPatrolIndex];
 
