@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI; 
 
-public class SaveStateManager : MonoBehaviour 
+public class SaveStateManager : Singleton<SaveStateManager> 
 {
 	[System.Serializable]
 	public struct SaveState
@@ -44,7 +44,13 @@ public class SaveStateManager : MonoBehaviour
 
 
 
+	public enum TetherType
+	{
+		TIME_TETHER,
+		OTHERWORLD
+	};
 
+	public TetherType tetherType; 
 
 	public GameObject levelParent; 
 
@@ -61,6 +67,7 @@ public class SaveStateManager : MonoBehaviour
 	public Image[] ui_tetherPoints; 
 	public Color ui_pointActiveColor; 
 	public Color ui_pointInactiveColor; 
+	public Color ui_pointStasisColor; 
 	public GameObject curTimeArrow; 
 	public bool arrowReachedPointTarget; 
 
@@ -71,6 +78,9 @@ public class SaveStateManager : MonoBehaviour
 	// Actions
 	public static System.Action OnTetherStateSaved;
 	public static System.Action OnTetherStateLoaded;
+
+	// Stasis Stuff
+	public List<GameObject> stasisBubbles; 
 
 	// Use this for initialization
 	void Start () 
@@ -89,7 +99,17 @@ public class SaveStateManager : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetKeyDown(saveKey) && curSaveState < numSaveStates)
+		if (tetherType == TetherType.TIME_TETHER)
+		{
+			CheckSaveLoadStateKeys(); 
+		}
+
+		UpdateUI(); 
+	}
+
+	void CheckSaveLoadStateKeys()
+	{
+		if (Input.GetKeyDown(saveKey) && curSaveState < numSaveStates - stasisBubbles.Count)
 		{
 			saveStates[curSaveState] = CreateSaveState(); 
 
@@ -126,10 +146,6 @@ public class SaveStateManager : MonoBehaviour
 
 			player.GetComponent<Rigidbody2D>().velocity = Vector3.zero; 
 		}
-
-
-
-		UpdateUI(); 
 	}
 
 
@@ -179,6 +195,12 @@ public class SaveStateManager : MonoBehaviour
 		if (!playerMoved && Vector3.Distance(player.transform.position, playerSavedPos) > 0.1f)
 		{
 			playerMoved = true; 
+		}
+
+		// Update ui_tetherPoints to account for stasis
+		for (int i = 0; i < stasisBubbles.Count; i++)
+		{
+			ui_tetherPoints[ui_tetherPoints.Length - 1 - i].color = ui_pointStasisColor; 
 		}
 
 	}
@@ -278,5 +300,28 @@ public class SaveStateManager : MonoBehaviour
 		{
 			OnTetherStateLoaded(); 
 		}
+	}
+
+	public bool CanMakeStasisBubble()
+	{
+		int remainingStates = numSaveStates - curSaveState; 
+		remainingStates -= stasisBubbles.Count; 
+
+		if (remainingStates > 0)
+		{
+			return true; 
+		}
+
+		return false; 
+	}
+
+	public void ResetStasisBubbles()
+	{
+		foreach (GameObject bubble in stasisBubbles)
+		{
+			Destroy(bubble); 
+		}
+
+		stasisBubbles.Clear(); 
 	}
 }

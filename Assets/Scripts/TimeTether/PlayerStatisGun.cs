@@ -18,7 +18,14 @@ public class PlayerStatisGun : MonoBehaviour
 	{
 		if (Input.GetKeyDown(shootKey))
 		{
-			Shoot(); 
+			if (SaveStateManager.inst.CanMakeStasisBubble())
+			{
+				Shoot(); 
+			}
+			else
+			{
+				SaveStateManager.inst.ResetStasisBubbles(); 
+			}
 		}
 	}
 

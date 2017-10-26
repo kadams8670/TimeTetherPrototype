@@ -11,6 +11,8 @@ public class StasisBullet : MonoBehaviour
 
 	public GameObject stasisFieldPrefab; 
 
+	public float durationTimer; 
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -25,16 +27,35 @@ public class StasisBullet : MonoBehaviour
 		//rb.velocity = new Vector2(speed, 0); 
 
 		rb.velocity = transform.up * speed; 
+
+		durationTimer -= Time.deltaTime; 
+		if (durationTimer <= 0)
+		{
+			Destroy(gameObject); 
+		}
 	}
 
 
 	void OnCollisionEnter2D(Collision2D col)
 	{
+		/*
 		if(((1<<col.gameObject.layer) & bulletLayerMask) != 0)
 		{
 			Instantiate(stasisFieldPrefab, transform.position, Quaternion.identity);
 			Destroy(gameObject); 
 		}
+		*/ 
+
+		if (SaveStateManager.inst.CanMakeStasisBubble())
+		{
+			GameObject newField = Instantiate(stasisFieldPrefab, transform.position, Quaternion.identity); 
+			SaveStateManager.inst.stasisBubbles.Add(newField);
+
+			// Note: setting the parent will mess up the scale IF the parent's scale is not uniform. For walls, use the SpriteRenderer tiling, not scale, to set width/height
+			newField.transform.SetParent(col.gameObject.transform); 
+		}
+
+		Destroy(gameObject);
 	}
 
 
