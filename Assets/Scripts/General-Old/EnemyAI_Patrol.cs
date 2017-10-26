@@ -24,7 +24,8 @@ public class EnemyAI_Patrol : MonoBehaviour
 	//write the wait at point for x seconds while at a point 
 	public float waitAtPoint;
 	//write rotation of guard while stationary 
-	public int rotateGuardSpeed;
+	public int rotateGuardAngle;
+	public float rotateGuardSpeed;
 	private float curTime;
 	public float wapypointPauseDuration;
 	public float timeToNextRotate;
@@ -38,7 +39,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 		otherAI = gameObject.GetComponent<GuardAI> ();
 		currentPatrolIndex = 0;
 		currentPatrolPoint = patrolPoints[currentPatrolIndex];
-		StartCoroutine(RotateObject(rotateGuardSpeed, Vector3.forward, 1));
+		StartCoroutine(RotateObject(rotateGuardAngle, Vector3.forward,rotateGuardSpeed));
 	}
 
 	// Update is called once per frame
