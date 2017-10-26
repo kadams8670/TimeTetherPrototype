@@ -50,6 +50,8 @@ public class StasisBullet : MonoBehaviour
 		{
 			GameObject newField = Instantiate(stasisFieldPrefab, transform.position, Quaternion.identity); 
 			SaveStateManager.inst.stasisBubbles.Add(newField);
+
+			// Note: setting the parent will mess up the scale IF the parent's scale is not uniform. For walls, use the SpriteRenderer tiling, not scale, to set width/height
 			newField.transform.SetParent(col.gameObject.transform); 
 		}
 

@@ -44,7 +44,13 @@ public class SaveStateManager : Singleton<SaveStateManager>
 
 
 
+	public enum TetherType
+	{
+		TIME_TETHER,
+		JUMP_TETHER
+	};
 
+	public TetherType tetherType; 
 
 	public GameObject levelParent; 
 
