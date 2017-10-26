@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI; 
 
-public class SaveStateManager : MonoBehaviour 
+public class SaveStateManager : Singleton<SaveStateManager> 
 {
 	[System.Serializable]
 	public struct SaveState
@@ -61,6 +61,7 @@ public class SaveStateManager : MonoBehaviour
 	public Image[] ui_tetherPoints; 
 	public Color ui_pointActiveColor; 
 	public Color ui_pointInactiveColor; 
+	public Color ui_pointStasisColor; 
 	public GameObject curTimeArrow; 
 	public bool arrowReachedPointTarget; 
 
@@ -71,6 +72,9 @@ public class SaveStateManager : MonoBehaviour
 	// Actions
 	public static System.Action OnTetherStateSaved;
 	public static System.Action OnTetherStateLoaded;
+
+	// Stasis Stuff
+	public List<GameObject> stasisBubbles; 
 
 	// Use this for initialization
 	void Start () 
@@ -278,5 +282,10 @@ public class SaveStateManager : MonoBehaviour
 		{
 			OnTetherStateLoaded(); 
 		}
+	}
+
+	public bool CanShootStasis()
+	{
+		return true; 
 	}
 }

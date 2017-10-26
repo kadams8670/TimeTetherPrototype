@@ -7,7 +7,7 @@ public class GhostForm : MonoBehaviour
 	public bool formActive = false;
 	public KeyCode useKey;
 	public float duration = 5f;
-	public float timer = 0;
+	[ReadOnly] public float timer = 0;
 	public GameObject shell;
 	private GameObject spawnedShell;
 
