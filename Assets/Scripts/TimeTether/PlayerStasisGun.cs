@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStatisGun : MonoBehaviour 
+public class PlayerStasisGun : MonoBehaviour 
 {
 	public KeyCode shootKey; 
+	public bool resetWhenFull; 
+
+	public KeyCode cancelKey; 
 	public GameObject stasisBulletPrefab; 
 
 	// Use this for initialization
@@ -22,10 +25,15 @@ public class PlayerStatisGun : MonoBehaviour
 			{
 				Shoot(); 
 			}
-			else
+			else if (resetWhenFull)
 			{
 				SaveStateManager.inst.ResetStasisBubbles(); 
 			}
+		}
+
+		if (Input.GetKeyDown(cancelKey))
+		{
+			SaveStateManager.inst.ResetStasisBubbles(); 
 		}
 	}
 
