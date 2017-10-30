@@ -7,6 +7,9 @@ public class StasisTrigger : MonoBehaviour
 	public bool toggleLockedState; 
 	public SavableGameObject savableGameObject; 
 	public SpriteRenderer statisActiveSprite; 
+	public FrozenObject toggleFrozenObject; 
+
+	public List<GameObject> collidingStasisFields; 
 
 	// Could list booleans determining what triggers this script
 
@@ -21,7 +24,8 @@ public class StasisTrigger : MonoBehaviour
 			if (toggleLockedState)
 			{
 				toggleLockedState = false; 
-				savableGameObject.SetLocked(!savableGameObject.GetLocked()); 
+
+				Toggle(!savableGameObject.GetLocked()); 
 			}
 		}
 
@@ -36,13 +40,24 @@ public class StasisTrigger : MonoBehaviour
 				statisActiveSprite.enabled = false; 
 			}
 		}
+
+		// Check for the removal of all stasis fields
+		if (CollidingStasisFieldsIsNull())
+		{
+			Debug.Log("Stasis field reset test"); 
+			Toggle(false);
+			collidingStasisFields.Clear(); 
+		}
+
+
 	}
 
 	void OnTriggerEnter2D(Collider2D other) 
 	{
 		if (other.CompareTag("StasisField"))
 		{
-			savableGameObject.SetLocked(true); 
+			Toggle(true); 
+			collidingStasisFields.Add(other.gameObject); 
 		}
 	}
 
@@ -50,7 +65,37 @@ public class StasisTrigger : MonoBehaviour
 	{
 		if (other.CompareTag("StasisField"))
 		{
-			savableGameObject.SetLocked(false); 
+			Toggle(false); 
+			collidingStasisFields.Remove(other.gameObject); 
 		}
+	}
+
+	void Toggle(bool newLockedState)
+	{
+		if (toggleFrozenObject != null)
+		{
+			toggleFrozenObject.frozen = newLockedState; 
+		}
+
+		savableGameObject.SetLocked(newLockedState); 
+	}
+		
+
+	bool CollidingStasisFieldsIsNull()
+	{
+		if (collidingStasisFields.Count > 0)
+		{
+			// As long as one of the fields isn't null, keep counting the collision
+			for (int i = 0; i < collidingStasisFields.Count; i++)
+			{
+				if (collidingStasisFields[i] != null)
+				{
+					return false; 
+				}
+			}
+			return true; 
+		}
+
+		return false; 
 	}
 }

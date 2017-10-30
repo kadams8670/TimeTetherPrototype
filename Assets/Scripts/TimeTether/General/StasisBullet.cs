@@ -7,7 +7,7 @@ public class StasisBullet : MonoBehaviour
 	Rigidbody2D rb; 
 
 	public float speed; 
-	public LayerMask bulletLayerMask; 
+	//public LayerMask bulletLayerMask; 
 
 	public GameObject stasisFieldPrefab; 
 
