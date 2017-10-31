@@ -11,6 +11,12 @@ public class GuardAI : MonoBehaviour
 	public float sightRange = 3;
 	public int numberOfChecks = 12;
 
+	public bool eatsStasis = false;
+	public int stasisCheckRadius = 5;
+	public float stasisEatTime = 8f;
+	private bool isEating = false;
+	public GameObject bubbleBeingEaten = null;
+
 	[HideInInspector]
 	public Vector3 target;
 
@@ -29,15 +35,35 @@ public class GuardAI : MonoBehaviour
 	void Update () 
 	{	
 		VisionCheck();
-		if (Mathf.Abs (Vector3.Distance (transform.position, target)) < 0.25f && hasTarget)
-			hasTarget = false;
+		if (Mathf.Abs (Vector3.Distance (transform.position, target)) < 0.25f && hasTarget) 
+		{
+			if(bubbleBeingEaten == null)
+				hasTarget = false;
+			else if(!isEating)
+				StartCoroutine (EatStasisField (bubbleBeingEaten));
+		}
 		Movement ();
 		ResizeLineOfSight ();
+		if(eatsStasis)
+		{
+			GameObject[] cols = GameObject.FindGameObjectsWithTag("StasisField");
+
+			for (int i = 0; i < cols.Length; i++) 
+			{
+				if (Vector3.Distance(transform.position, cols[i].transform.position) < stasisCheckRadius) 
+				{
+					Debug.Log ("Found Stasis Field...");
+					hasTarget = true;
+					bubbleBeingEaten = cols[i].gameObject;
+					target = cols [i].transform.position;
+				}
+			}
+		}
 	}
 
 	void Movement()
 	{
-		if(hasTarget)
+		if(hasTarget && !isEating)
 		{
 			Vector3 diff = transform.position - target;
 			diff.Normalize();
@@ -53,6 +79,20 @@ public class GuardAI : MonoBehaviour
 	{
 		//0.6697227 base, when length is 5
 		visionCone.transform.localScale = new Vector3(0.6697227f * sightRange/5, 0.6697227f * sightRange/5, 1);
+	}
+
+	IEnumerator EatStasisField(GameObject obj)
+	{
+		isEating = true;
+		yield return new WaitForSeconds (stasisEatTime);
+		Debug.Log ("Eating Bubble...");
+		if (obj.CompareTag ("StasisField") && SaveStateManager.inst.CheckIfPlayerBubble (obj)) {
+			SaveStateManager.inst.RemoveBubble (obj);
+		} else if (obj.CompareTag ("StasisField"))
+			Destroy (obj);
+		bubbleBeingEaten = null;
+		hasTarget = false;
+
 	}
 
 	void VisionCheck()
