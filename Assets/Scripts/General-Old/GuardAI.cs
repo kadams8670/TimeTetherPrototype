@@ -44,7 +44,7 @@ public class GuardAI : MonoBehaviour
 		}
 		Movement ();
 		ResizeLineOfSight ();
-		if(eatsStasis)
+		if(eatsStasis && !isEating)
 		{
 			GameObject[] cols = GameObject.FindGameObjectsWithTag("StasisField");
 
@@ -105,7 +105,7 @@ public class GuardAI : MonoBehaviour
 			if (hit1.collider != null) 
 			{
 				Debug.DrawLine (transform.position, hit1.point, Color.red);
-				if(hit1.collider.CompareTag("Player"))
+				if(hit1.collider.CompareTag("Player") && !isEating)
 				{
 					target = hit1.collider.transform.position;
 					hasTarget = true;
@@ -119,7 +119,7 @@ public class GuardAI : MonoBehaviour
 			if (hit2.collider != null) 
 			{
 				Debug.DrawLine (transform.position, hit2.point, Color.red);
-				if(hit2.collider.CompareTag("Player"))
+				if(hit2.collider.CompareTag("Player") && !isEating)
 				{
 					target = hit2.collider.transform.position;
 					hasTarget = true;
@@ -135,7 +135,7 @@ public class GuardAI : MonoBehaviour
 		if (hit3.collider != null) 
 		{
 			Debug.DrawLine (transform.position, hit3.point, Color.red);
-			if(hit3.collider.CompareTag("Player"))
+			if(hit3.collider.CompareTag("Player") && !isEating)
 			{
 				target = hit3.collider.transform.position;
 				hasTarget = true;
