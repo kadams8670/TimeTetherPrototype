@@ -6,6 +6,9 @@ public class SavableGameObject : MonoBehaviour
 {
 	[ReadOnly] public bool locked; 
 
+	[Tooltip("When true, removing stasis will NOT reset the object position/rotation/enabled data. This is useful for stuff like moving object in the otherworld")]
+	public bool dontResetUponUnlock; 
+
 	public SaveStateManager.SavableGameObjectData lockData;
 
 
@@ -70,7 +73,11 @@ public class SavableGameObject : MonoBehaviour
 		}
 
 		locked = false; 
-		ReadLockData();  
+
+		if (!dontResetUponUnlock)
+		{
+			ReadLockData(); 
+		}
 	}
 		
 }
