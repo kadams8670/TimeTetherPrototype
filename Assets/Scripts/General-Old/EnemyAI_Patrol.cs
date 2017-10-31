@@ -16,6 +16,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 	public bool isChasing;
 	public bool endPatrol;
 	public bool isOscillating;
+	public bool teleportMovement;
 	public float wanderTime;
 	public float timer;
 	private float wanderPointTimer;
@@ -89,8 +90,13 @@ public class EnemyAI_Patrol : MonoBehaviour
 
 	void Patrol()
 	{
-		if(curTime <= 0)
-			transform.Translate(Vector3.up * Time.deltaTime * Speed);
+		if(curTime <= 0) 
+		{
+			if (teleportMovement)
+				transform.position = currentPatrolPoint.position;
+			else
+				transform.Translate (Vector3.up * Time.deltaTime * Speed);
+		}
 
 		if (endPatrol == false) 
 		{

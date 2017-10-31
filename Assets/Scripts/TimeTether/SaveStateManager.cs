@@ -324,4 +324,31 @@ public class SaveStateManager : Singleton<SaveStateManager>
 
 		stasisBubbles.Clear(); 
 	}
+
+	/// <summary>
+	/// Call externally from an object, such as a guard, that should remove a stasis bubble created by the player
+	/// </summary>
+	/// <param name="bubble">Bubble object.</param>
+	public void RemoveBubble(GameObject bubble)
+	{
+		if (bubble.CompareTag("StasisField") && stasisBubbles.Contains(bubble))
+		{
+			stasisBubbles.Remove(bubble); 
+			Destroy(bubble); 
+		}
+	}
+
+	/// <summary>
+	/// Checks if the bubble gameObject passed in belongs to the player
+	/// </summary>
+	/// <returns><c>true</c>, if if player bubble was checked, <c>false</c> otherwise.</returns>
+	/// <param name="bubble">Bubble.</param>
+	public bool CheckIfPlayerBubble(GameObject bubble)
+	{
+		if (bubble.CompareTag("StasisField") && stasisBubbles.Contains(bubble))
+		{
+			return true; 
+		}
+		return false; 
+	}
 }
