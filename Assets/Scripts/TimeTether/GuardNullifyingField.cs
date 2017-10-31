@@ -22,8 +22,13 @@ public class GuardNullifyingField : MonoBehaviour
 		{
 			Debug.Log ("Im triggered");
 			GameObject.FindGameObjectWithTag ("Player").GetComponent<Player> ().canJump = false;
-			GameObject.FindGameObjectWithTag ("Player").GetComponent<GhostForm> ().isDsabled = true;
+			GameObject.FindGameObjectWithTag ("Player").GetComponent<GhostForm> ().isDisabled = true;
 			GameObject.Find ("SaveStateManager").GetComponent<SaveStateManager> ().ResetStasisBubbles ();
 		}
+	}
+
+	void OnTriggerExit2D(Collider2D col)
+	{
+		GameObject.FindGameObjectWithTag ("Player").GetComponent<GhostForm> ().isDisabled = false;
 	}
 }

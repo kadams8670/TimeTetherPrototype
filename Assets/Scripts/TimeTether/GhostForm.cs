@@ -10,7 +10,7 @@ public class GhostForm : MonoBehaviour
 	[ReadOnly] public float timer = 0;
 	public GameObject shell;
 	private GameObject spawnedShell;
-	public bool isDsabled; 
+	public bool isDisabled = false; 
 
 	// Use this for initialization
 	void Start () 
@@ -31,7 +31,7 @@ public class GhostForm : MonoBehaviour
 				ShiftFromGhost ();
 			}
 		}
-		if (isDsabled == true && formActive == true) 
+		if (isDisabled == true && formActive == true) 
 		{
 			ShiftFromGhost ();
 		} 
