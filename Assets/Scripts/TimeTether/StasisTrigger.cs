@@ -65,8 +65,12 @@ public class StasisTrigger : MonoBehaviour
 	{
 		if (other.CompareTag("StasisField"))
 		{
-			Toggle(false); 
 			collidingStasisFields.Remove(other.gameObject); 
+
+			if (collidingStasisFields.Count == 0)
+			{
+				Toggle(false);
+			}
 		}
 	}
 
