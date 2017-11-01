@@ -14,13 +14,12 @@ public class GuardAI : MonoBehaviour
 	public bool eatsStasis = false;
 	public int stasisCheckRadius = 5;
 	public float stasisEatTime = 8f;
-	private bool isEating = false;
+	public bool isEating = false;
 	public GameObject bubbleBeingEaten = null;
 
 	[HideInInspector]
 	public Vector3 target;
 
-	[HideInInspector]
 	public bool hasTarget = false;
 
 	private Transform visionCone;
@@ -30,7 +29,7 @@ public class GuardAI : MonoBehaviour
 	{
 		visionCone = transform.Find ("line of sight");
 	}
-	
+
 	// Update is called once per frame
 	void Update () 
 	{	
@@ -52,10 +51,14 @@ public class GuardAI : MonoBehaviour
 			{
 				if (Vector3.Distance(transform.position, cols[i].transform.position) < stasisCheckRadius) 
 				{
-					Debug.Log ("Found Stasis Field...");
-					hasTarget = true;
-					bubbleBeingEaten = cols[i].gameObject;
-					target = cols [i].transform.position;
+					RaycastHit2D hit = Physics2D.Linecast (transform.position, cols [i].transform.position, visionLayers);
+					if(hit.collider ==null)
+					{
+						Debug.Log ("Found Stasis Field...");
+						hasTarget = true;
+						bubbleBeingEaten = cols [i].gameObject;
+						target = cols [i].transform.position;
+					}
 				}
 			}
 		}
@@ -92,6 +95,7 @@ public class GuardAI : MonoBehaviour
 			Destroy (obj);
 		bubbleBeingEaten = null;
 		hasTarget = false;
+		isEating = false;
 
 	}
 
