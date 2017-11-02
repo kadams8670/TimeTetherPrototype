@@ -37,6 +37,7 @@ public class GrappleHook : MonoBehaviour {
 	{
 		if(!isExtended)
 		{
+			gameObject.GetComponent<Rigidbody2D> ().velocity = Vector3.zero;
 			rotationFacing = player.transform.eulerAngles;
 			transform.localPosition = Vector3.zero;
 		}

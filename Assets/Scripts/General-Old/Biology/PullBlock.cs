@@ -28,7 +28,7 @@ public class PullBlock : MonoBehaviour
 
 	public void Pull(Directions direction)
 	{
-		gameObject.layer = 13;
+		gameObject.layer = 12;
 
 		switch(direction)
 		{
@@ -51,6 +51,6 @@ public class PullBlock : MonoBehaviour
 	IEnumerator ResetLayer()
 	{
 		yield return new WaitForSeconds (0.75f);
-		gameObject.layer = 12;
+		gameObject.layer = 0;
 	}
 }
