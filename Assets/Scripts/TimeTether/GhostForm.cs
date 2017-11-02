@@ -55,7 +55,7 @@ public class GhostForm : MonoBehaviour
 		spawnedShell = Instantiate (shell, transform.position, transform.rotation, transform.parent);
 	}
 
-	void ShiftFromGhost()
+	public void ShiftFromGhost()
 	{
 		gameObject.layer = 13;
 		timer = 0;
