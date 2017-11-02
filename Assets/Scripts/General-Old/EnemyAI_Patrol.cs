@@ -30,6 +30,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 	private float curTime;
 	public float wapypointPauseDuration;
 	public float timeToNextRotate;
+	public float turnSpeed;
 
 	Vector3 wanderTarget;
 	Vector3 velocity;
@@ -146,7 +147,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 		//Made the rotation to face
 		Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
 		//Apply rotation to transform
-		transform.rotation = Quaternion.RotateTowards(transform.rotation, q, 5f);
+		transform.rotation = Quaternion.RotateTowards(transform.rotation, q, turnSpeed);
 	}
 
 	void Wander()
