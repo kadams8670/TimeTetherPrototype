@@ -54,7 +54,7 @@ public class GuardAI : MonoBehaviour
 					RaycastHit2D hit = Physics2D.Linecast (transform.position, cols [i].transform.position, visionLayers);
 					if(hit.collider ==null)
 					{
-						Debug.Log ("Found Stasis Field...");
+						//Debug.Log ("Found Stasis Field...");
 						hasTarget = true;
 						bubbleBeingEaten = cols [i].gameObject;
 						target = cols [i].transform.position;
@@ -88,11 +88,19 @@ public class GuardAI : MonoBehaviour
 	{
 		isEating = true;
 		yield return new WaitForSeconds (stasisEatTime);
-		Debug.Log ("Eating Bubble...");
-		if (obj.CompareTag ("StasisField") && SaveStateManager.inst.CheckIfPlayerBubble (obj)) {
-			SaveStateManager.inst.RemoveBubble (obj);
-		} else if (obj.CompareTag ("StasisField"))
-			Destroy (obj);
+		//Debug.Log ("Eating Bubble...");
+
+		if (obj != null)
+		{
+			if (obj.CompareTag("StasisField") && SaveStateManager.inst.CheckIfPlayerBubble(obj))
+			{
+				SaveStateManager.inst.RemoveBubble(obj);
+			}
+			else if (obj.CompareTag("StasisField"))
+			{
+				Destroy(obj);
+			}
+		}
 		bubbleBeingEaten = null;
 		hasTarget = false;
 		isEating = false;
