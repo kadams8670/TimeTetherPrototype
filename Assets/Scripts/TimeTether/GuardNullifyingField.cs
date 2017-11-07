@@ -25,6 +25,7 @@ public class GuardNullifyingField : MonoBehaviour
 			GameObject.FindGameObjectWithTag ("Player").GetComponent<GhostForm> ().isDisabled = true;
 			GameObject.Find ("SaveStateManager").GetComponent<SaveStateManager> ().ResetStasisBubbles ();
 			GameObject.FindGameObjectWithTag ("Player").GetComponent<GhostForm> ().ShiftFromGhost();
+			Destroy(GameObject.FindGameObjectWithTag ("Player").GetComponent<Player> ().jumpTarget);
 		}
 	}
 

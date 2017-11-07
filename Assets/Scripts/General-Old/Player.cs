@@ -47,8 +47,8 @@ public class Player : Controller
 	[SerializeField]
 	private float distanceIncrement = 2f;
 	private float currJumpDistance;
-
-	private GameObject jumpTarget;
+	[HideInInspector]
+	public GameObject jumpTarget;
 
 	/* Instance Methods */
 	public override void Awake ()
