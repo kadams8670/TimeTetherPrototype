@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ForceEnableObj_Interactable))]
 public class PressurePad : MonoBehaviour 
 {
 	public bool activated; 
+	public bool inverted; 
 
 	[HideInInspector] public List<GameObject> collidingObjects; 
 
@@ -14,12 +16,15 @@ public class PressurePad : MonoBehaviour
 	public Color activatedColor; 
 	public Color offColor;
 
+	ForceEnableObj_Interactable forceEnableScript; 
+
 	SpriteRenderer rend; 
 
 	// Use this for initialization
 	void Start () 
 	{
 		rend = GetComponent<SpriteRenderer>(); 
+		forceEnableScript = GetComponent<ForceEnableObj_Interactable>(); 
 	}
 	
 	// Update is called once per frame
@@ -28,11 +33,26 @@ public class PressurePad : MonoBehaviour
 		if (activated)
 		{
 			rend.color = activatedColor;
+
+			forceEnableScript.setEnable = true;
+
+			if (inverted)
+				forceEnableScript.setEnable = false; 
+
+			SwitchInteract(); 
 		}
 		else
 		{
 			rend.color = offColor; 
+
+			forceEnableScript.setEnable = false; 
+
+			if (inverted)
+				forceEnableScript.setEnable = true; 
+
+			SwitchInteract(); 
 		}
+
 	}
 
 	void OnTriggerEnter2D(Collider2D other)
@@ -46,8 +66,16 @@ public class PressurePad : MonoBehaviour
 
 			if (!activated)
 			{
-				activated = true; 
+				activated = true;
+
+				/*
+				forceEnableScript.setEnable = true;
+
+				if (inverted)
+					forceEnableScript.setEnable = false; 
+
 				SwitchInteract(); 
+				*/ 
 			}
 		} 
 	}
@@ -66,7 +94,15 @@ public class PressurePad : MonoBehaviour
 			if (collidingObjects.Count == 0)
 			{
 				activated = false; 
+
+				/*
+				forceEnableScript.setEnable = false; 
+
+				if (inverted)
+					forceEnableScript.setEnable = true; 
+				
 				SwitchInteract(); 
+				*/ 
 			}
 		}
 	}
@@ -78,4 +114,6 @@ public class PressurePad : MonoBehaviour
 			i.OnInteract(); 
 		}
 	}
+
+
 }
