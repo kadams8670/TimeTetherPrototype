@@ -13,6 +13,11 @@ public class SecurityLaser : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		
+	}
+
+	void LateUpdate()
+	{
 		if (Temp_LevelStateManager.inst.securityAlertActive)
 		{
 			gameObject.SetActive(false); 
