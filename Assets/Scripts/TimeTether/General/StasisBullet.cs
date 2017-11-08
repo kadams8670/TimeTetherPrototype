@@ -46,6 +46,8 @@ public class StasisBullet : MonoBehaviour
 		}
 		*/ 
 
+		Debug.Log("Collision to make bubble"); 
+
 		if (SaveStateManager.inst.CanMakeStasisBubble())
 		{
 			GameObject newField = Instantiate(stasisFieldPrefab, transform.position, Quaternion.identity); 

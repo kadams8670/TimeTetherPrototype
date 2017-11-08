@@ -325,6 +325,16 @@ public class SaveStateManager : Singleton<SaveStateManager>
 		stasisBubbles.Clear(); 
 	}
 
+	//TODO
+	public void RemoveLastBubble()
+	{
+		if (stasisBubbles.Count > 0)
+		{
+			Destroy(stasisBubbles[stasisBubbles.Count - 1]); 
+			stasisBubbles.RemoveAt(stasisBubbles.Count - 1); 
+		}
+	}
+
 	/// <summary>
 	/// Call externally from an object, such as a guard, that should remove a stasis bubble created by the player
 	/// </summary>
