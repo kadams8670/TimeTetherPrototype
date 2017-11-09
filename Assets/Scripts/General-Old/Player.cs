@@ -84,13 +84,21 @@ public class Player : Controller
 	private void updatePrime()
 	{
 		cooldownCur -= Time.deltaTime;
+		if (cooldownCur <= 0f)
+		{
+			if (charges < chargesMax)
+			{
+				charges++;
+				if (charges != chargesMax)
+					cooldownCur = cooldownMax;
+				cooldownCur = 0f;
+
+				Debug.Log (charges); //DEBUG
+			}
+		}
+
 		if (cooldownCur > 0f && charges == 0)
 			return;
-		else if(charges < chargesMax)
-		{
-			charges++;
-			cooldownCur = cooldownMax;
-		}
 
 		if (!canJump)
 			return;
@@ -142,10 +150,8 @@ public class Player : Controller
 		if (teleportType == JumpMethod.mouse)
 			dir = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
 
-		RaycastHit2D[] pathCheck = null;
-		ContactFilter2D filter = new ContactFilter2D ();
-		filter.layerMask = LayerMask.NameToLayer ("Walls");
-		GetComponent<Collider2D> ().Cast (dir, filter, pathCheck, currJumpDistance);
+		float colliderRadius = GetComponent<CircleCollider2D> ().radius;
+		RaycastHit2D[] pathCheck = Physics2D.CircleCastAll (transform.position, colliderRadius, dir, currJumpDistance, 1 << LayerMask.NameToLayer ("Wall"));
 
 		if (pathCheck != null)
 		{
@@ -169,7 +175,7 @@ public class Player : Controller
 		case JumpMethod.mouse:
 			Vector3 mp = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 10f));
 			float dist = Vector3.Distance (mp, transform.position);
-			if (dist > currJumpDistance)
+			if (dist > jd)
 				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * jd;
 			else if(dist < minJumpDistance)
 				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * Mathf.Min(jd, minJumpDistance);
@@ -207,7 +213,7 @@ public class Player : Controller
 	private void updateJumping()
 	{
 		transform.position = Vector2.Lerp (transform.position, jumpTarget.transform.position, jumpSpeed * Time.deltaTime);
-		if (Vector2.Distance (transform.position, jumpTarget.transform.position) < 0.01f)
+		if (Vector2.Distance (transform.position, jumpTarget.transform.position) < 0.1f)
 		{
 			Destroy (jumpTarget);
 			setState (prime);
