@@ -34,8 +34,12 @@ public class Player : Controller
 	[SerializeField]
 	private float cooldownMax = 2f;
 	private float cooldownCur = 0f;
+	private int charges;
+	public int currCharges { get { return charges; } }
+	[SerializeField]
+	private int chargesMax = 3;
 
-	public bool canJump = false;
+	public bool canJump = true;
 
 	public enum JumpMethod { direct, mouse }
 	[SerializeField]
@@ -45,16 +49,27 @@ public class Player : Controller
 	[SerializeField]
 	private float maxJumpDistance = 10f;
 	[SerializeField]
+	private bool useIncrement = true;
+	[SerializeField]
 	private float distanceIncrement = 2f;
+	[SerializeField]
+	private float jumpSpeed = 0.1f;
 	private float currJumpDistance;
 	[HideInInspector]
 	public GameObject jumpTarget;
+	private Vector3 startJumpPosition;
+
+	private BehaviorState prime;
+	private BehaviorState jumping;
 
 	/* Instance Methods */
 	public override void Awake ()
 	{
 		base.Awake ();
-		setState (new BehaviorState("prime", this.updatePrime, this.fixedUpdatePrime, this.lateUpdatePrime));
+		prime = new BehaviorState ("prime", this.updatePrime, this.fixedUpdatePrime, this.lateUpdatePrime);
+		jumping = new BehaviorState("jumping", this.updateJumping, this.fuJumping, this.lateUpdatePrime);
+
+		setState (prime);
 
 		direction = Vector2.zero;
 
@@ -68,10 +83,13 @@ public class Player : Controller
 
 	private void updatePrime()
 	{
-		if (cooldownCur > 0f)
-		{
-			cooldownCur -= Time.deltaTime;
+		cooldownCur -= Time.deltaTime;
+		if (cooldownCur > 0f && charges == 0)
 			return;
+		else if(charges < chargesMax)
+		{
+			charges++;
+			cooldownCur = cooldownMax;
 		}
 
 		if (!canJump)
@@ -80,32 +98,28 @@ public class Player : Controller
 		//released jump key, perform the jump
 		if (Input.GetKeyUp (use_ability))
 		{
-			Vector3 dir = transform.up;
-			if (teleportType == JumpMethod.mouse)
-				dir = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
-			
-			RaycastHit2D pathCheck = Physics2D.Raycast (transform.position, dir, currJumpDistance, 1 << LayerMask.NameToLayer("Wall"));
+			startJumpPosition = transform.position;
 
-			if (pathCheck.collider == null)
-			{
-				transform.position = new Vector3 (
-					jumpTarget.transform.position.x,
-					jumpTarget.transform.position.y,
-					0f);
+			setState (jumping);
 
+			if (charges == 0)
 				cooldownCur = cooldownMax;
-			}
+			else
+				charges--;
 
-			Destroy (jumpTarget);
 			currJumpDistance = 0f;
+			return;
 		}
 
 		//holding the jump key, increment distance
 		if (jumpTarget != null && Input.GetKey (use_ability))
 		{
-			currJumpDistance += distanceIncrement * Time.deltaTime;
-			if (currJumpDistance > maxJumpDistance)
-				currJumpDistance = maxJumpDistance;
+			if (useIncrement)
+			{
+				currJumpDistance += distanceIncrement * Time.deltaTime;
+				if (currJumpDistance > maxJumpDistance)
+					currJumpDistance = maxJumpDistance;
+			}
 
 			updateJumpMarker ();
 		}
@@ -113,7 +127,7 @@ public class Player : Controller
 		//pressed the jump key, init jump state
 		if(Input.GetKeyDown(use_ability))
 		{
-			currJumpDistance = minJumpDistance;
+			currJumpDistance = useIncrement ? minJumpDistance : maxJumpDistance;
 			GameObject jtPref = Resources.Load<GameObject> ("JumpTarget");
 			jumpTarget = Instantiate<GameObject> (jtPref, transform.position, Quaternion.identity);
 
@@ -122,18 +136,43 @@ public class Player : Controller
 	}
 	private void updateJumpMarker()
 	{
+		float jd = currJumpDistance;
+
+		Vector3 dir = transform.up;
+		if (teleportType == JumpMethod.mouse)
+			dir = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
+
+		RaycastHit2D[] pathCheck = null;
+		ContactFilter2D filter = new ContactFilter2D ();
+		filter.layerMask = LayerMask.NameToLayer ("Walls");
+		GetComponent<Collider2D> ().Cast (dir, filter, pathCheck, currJumpDistance);
+
+		if (pathCheck != null)
+		{
+			RaycastHit2D nearest = default(RaycastHit2D);
+			foreach (RaycastHit2D hit in pathCheck)
+			{
+				if (nearest == default(RaycastHit2D))
+					nearest = hit;
+				else if (hit.distance < nearest.distance)
+					nearest = hit;
+			}
+
+			if (nearest != default(RaycastHit2D) && nearest.distance < jd)
+				jd = nearest.distance;
+		}
 		switch (teleportType)
 		{
 		case JumpMethod.direct:
-			jumpTarget.transform.position = transform.position + transform.up * currJumpDistance;
+			jumpTarget.transform.position = transform.position + transform.up * jd;
 			break;
 		case JumpMethod.mouse:
 			Vector3 mp = Camera.main.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, 10f));
 			float dist = Vector3.Distance (mp, transform.position);
 			if (dist > currJumpDistance)
-				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * currJumpDistance;
+				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * jd;
 			else if(dist < minJumpDistance)
-				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * minJumpDistance;
+				jumpTarget.transform.position = transform.position + (mp - transform.position).normalized * Mathf.Min(jd, minJumpDistance);
 			else
 				jumpTarget.transform.position = mp;
 			break;
@@ -161,6 +200,21 @@ public class Player : Controller
 	}
 
 	private void lateUpdatePrime()
+	{
+
+	}
+
+	private void updateJumping()
+	{
+		transform.position = Vector2.Lerp (transform.position, jumpTarget.transform.position, jumpSpeed * Time.deltaTime);
+		if (Vector2.Distance (transform.position, jumpTarget.transform.position) < 0.01f)
+		{
+			Destroy (jumpTarget);
+			setState (prime);
+		}
+	}
+
+	private void fuJumping()
 	{
 
 	}
