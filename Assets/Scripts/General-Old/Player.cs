@@ -34,10 +34,12 @@ public class Player : Controller
 	[SerializeField]
 	private float cooldownMax = 2f;
 	private float cooldownCur = 0f;
+	public float cooldownPerc { get { return cooldownCur / cooldownMax; } }
 	private int charges;
 	public int currCharges { get { return charges; } }
 	[SerializeField]
 	private int chargesMax = 3;
+	public int maxCharges { get { return chargesMax; } }
 
 	public bool canJump = true;
 
@@ -53,7 +55,7 @@ public class Player : Controller
 	[SerializeField]
 	private float distanceIncrement = 2f;
 	[SerializeField]
-	private float jumpSpeed = 0.1f;
+	private float jumpSpeed = 10f;
 	private float currJumpDistance;
 	[HideInInspector]
 	public GameObject jumpTarget;
@@ -71,9 +73,17 @@ public class Player : Controller
 
 		setState (prime);
 
+		charges = chargesMax;
+
 		direction = Vector2.zero;
 
 		jumpTarget = null;
+
+		//fix values to appropriate ranges
+		if (minJumpDistance > maxJumpDistance)
+			minJumpDistance = maxJumpDistance;
+
+		distanceIncrement = Mathf.Abs (distanceIncrement);
 	}
 
 	public void Start()
@@ -90,14 +100,12 @@ public class Player : Controller
 			{
 				charges++;
 				if (charges != chargesMax)
-					cooldownCur = cooldownMax;
-				cooldownCur = 0f;
-
-				Debug.Log (charges); //DEBUG
+					cooldownCur = 0f;
+				cooldownCur = cooldownMax;
 			}
 		}
 
-		if (cooldownCur > 0f && charges == 0)
+		if (charges < 1)
 			return;
 
 		if (!canJump)
@@ -110,10 +118,9 @@ public class Player : Controller
 
 			setState (jumping);
 
-			if (charges == 0)
+			charges--;
+			if (cooldownCur <= 0f)
 				cooldownCur = cooldownMax;
-			else
-				charges--;
 
 			currJumpDistance = 0f;
 			return;
@@ -212,10 +219,18 @@ public class Player : Controller
 
 	private void updateJumping()
 	{
-		transform.position = Vector2.Lerp (transform.position, jumpTarget.transform.position, jumpSpeed * Time.deltaTime);
-		if (Vector2.Distance (transform.position, jumpTarget.transform.position) < 0.1f)
+		try
 		{
-			Destroy (jumpTarget);
+			transform.position = Vector2.Lerp (transform.position, jumpTarget.transform.position, jumpSpeed * Time.deltaTime);
+			if (Vector2.Distance (transform.position, jumpTarget.transform.position) < 0.1f)
+			{
+				Destroy (jumpTarget);
+				setState (prime);
+			}
+		}
+		catch(MissingReferenceException mre)
+		{
+			Debug.LogError (mre.Message);
 			setState (prime);
 		}
 	}
@@ -223,11 +238,6 @@ public class Player : Controller
 	private void fuJumping()
 	{
 
-	}
-
-	public float cooldownPercentage()
-	{
-		return cooldownCur / cooldownMax;
 	}
 
 	public void OnDrawGizmos()
