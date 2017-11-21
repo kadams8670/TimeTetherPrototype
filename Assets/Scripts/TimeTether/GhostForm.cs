@@ -19,6 +19,7 @@ public class GhostForm : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		timer = duration;
 		GameObject meter = GameObject.Find ("GHOSTMETER");
 		if (meter != null)
 			fillMeter = meter.GetComponent<Image> ();
