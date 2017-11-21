@@ -17,7 +17,6 @@ public class EnemyAI_Patrol : MonoBehaviour
 	public bool endPatrol;
 	public bool isOscillating;
 	public bool teleportMovement;
-	public bool doesTriggerSecurity;
 	public float wanderTime;
 	public float timer;
 	private float wanderPointTimer;
@@ -33,7 +32,6 @@ public class EnemyAI_Patrol : MonoBehaviour
 	public float timeToNextRotate;
 	public float turnSpeed;
 
-
 	Vector3 wanderTarget;
 	Vector3 velocity;
 
@@ -47,26 +45,21 @@ public class EnemyAI_Patrol : MonoBehaviour
 	}
 
 	// Update is called once per frame
-
 	void Update()
 	{
-
 		if (isOscillating == true) 
 			Speed = 0f;
 
 		if (otherAI.hasTarget) {
 			isChasing = true;
 			isOscillating = false;
-			if (doesTriggerSecurity == true) {
-				Temp_LevelStateManager.inst.securityAlertActive = true;
-			}		
 		}
 
 
  		if (isChasing && !otherAI.hasTarget) 
 		{
 			isWandering = true;
-			isChasing = false; 
+			isChasing = false;
 		}
 		if(isChasing)
 		{
@@ -217,4 +210,5 @@ public class EnemyAI_Patrol : MonoBehaviour
 			yield return new WaitForSeconds(timeToNextRotate);
 		}
 	}
+
 }
