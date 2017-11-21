@@ -159,7 +159,9 @@ public class Player : Controller
 			dir = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
 
 		float colliderRadius = GetComponent<CircleCollider2D> ().radius;
-		RaycastHit2D[] pathCheck = Physics2D.CircleCastAll (transform.position, colliderRadius, dir, currJumpDistance, 1 << LayerMask.NameToLayer ("Wall"));
+		int layers = 1 << LayerMask.NameToLayer ("Wall"); 
+		layers |= 1 << LayerMask.NameToLayer ("SpecialWall1");
+		RaycastHit2D[] pathCheck = Physics2D.CircleCastAll (transform.position, colliderRadius, dir, currJumpDistance, layers);
 
 		if (pathCheck != null)
 		{
