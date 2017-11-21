@@ -17,6 +17,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 	public bool endPatrol;
 	public bool isOscillating;
 	public bool teleportMovement;
+	public bool doesTriggerSecurity;
 	public float wanderTime;
 	public float timer;
 	private float wanderPointTimer;
@@ -53,6 +54,9 @@ public class EnemyAI_Patrol : MonoBehaviour
 		if (otherAI.hasTarget) {
 			isChasing = true;
 			isOscillating = false;
+			if (doesTriggerSecurity == true) {
+				Temp_LevelStateManager.inst.securityAlertActive = true;
+			}	
 		}
 
 
