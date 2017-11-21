@@ -116,6 +116,7 @@ public class Player : Controller
 		{
 			startJumpPosition = transform.position;
 
+			gameObject.layer = LayerMask.NameToLayer ("JumpingPlayer");
 			setState (jumping);
 
 			charges--;
@@ -225,12 +226,14 @@ public class Player : Controller
 			if (Vector2.Distance (transform.position, jumpTarget.transform.position) < 0.1f)
 			{
 				Destroy (jumpTarget);
+				gameObject.layer = LayerMask.NameToLayer("Player");
 				setState (prime);
 			}
 		}
 		catch(MissingReferenceException mre)
 		{
 			Debug.LogError (mre.Message);
+			gameObject.layer = LayerMask.NameToLayer("Player");
 			setState (prime);
 		}
 	}
