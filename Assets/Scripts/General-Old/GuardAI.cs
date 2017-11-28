@@ -64,6 +64,14 @@ public class GuardAI : MonoBehaviour
 		}
 	}
 
+	public void KillGuard()
+	{
+		hasTarget = false;
+		isEating = false;
+		bubbleBeingEaten = null;
+		gameObject.SetActive (false);
+	}
+
 	void Movement()
 	{
 		if(hasTarget && !isEating)
