@@ -116,6 +116,7 @@ public class Player : Controller
 		{
 			startJumpPosition = transform.position;
 
+			gameObject.layer = LayerMask.NameToLayer ("JumpingPlayer");
 			setState (jumping);
 
 			charges--;
@@ -158,7 +159,9 @@ public class Player : Controller
 			dir = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
 
 		float colliderRadius = GetComponent<CircleCollider2D> ().radius;
-		RaycastHit2D[] pathCheck = Physics2D.CircleCastAll (transform.position, colliderRadius, dir, currJumpDistance, 1 << LayerMask.NameToLayer ("Wall"));
+		int layers = 1 << LayerMask.NameToLayer ("Wall"); 
+		layers |= 1 << LayerMask.NameToLayer ("SpecialWall1");
+		RaycastHit2D[] pathCheck = Physics2D.CircleCastAll (transform.position, colliderRadius, dir, currJumpDistance, layers);
 
 		if (pathCheck != null)
 		{
@@ -225,12 +228,14 @@ public class Player : Controller
 			if (Vector2.Distance (transform.position, jumpTarget.transform.position) < 0.1f)
 			{
 				Destroy (jumpTarget);
+				gameObject.layer = LayerMask.NameToLayer("Player");
 				setState (prime);
 			}
 		}
 		catch(MissingReferenceException mre)
 		{
 			Debug.LogError (mre.Message);
+			gameObject.layer = LayerMask.NameToLayer("Player");
 			setState (prime);
 		}
 	}
