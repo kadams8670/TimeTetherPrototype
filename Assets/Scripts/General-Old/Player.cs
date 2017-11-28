@@ -93,15 +93,18 @@ public class Player : Controller
 
 	private void updatePrime()
 	{
-		cooldownCur -= Time.deltaTime;
-		if (cooldownCur <= 0f)
+		if (!Input.GetKey (use_ability))
 		{
-			if (charges < chargesMax)
+			cooldownCur -= Time.deltaTime;
+			if (cooldownCur <= 0f)
 			{
-				charges++;
-				if (charges != chargesMax)
-					cooldownCur = 0f;
-				cooldownCur = cooldownMax;
+				if (charges < chargesMax)
+				{
+					charges++;
+					if (charges != chargesMax)
+						cooldownCur = 0f;
+					cooldownCur = cooldownMax;
+				}
 			}
 		}
 
@@ -159,7 +162,9 @@ public class Player : Controller
 			dir = Camera.main.ScreenToWorldPoint (Input.mousePosition) - transform.position;
 
 		float colliderRadius = GetComponent<CircleCollider2D> ().radius;
-		RaycastHit2D[] pathCheck = Physics2D.CircleCastAll (transform.position, colliderRadius, dir, currJumpDistance, 1 << LayerMask.NameToLayer ("Wall"));
+		int layers = 1 << LayerMask.NameToLayer ("Wall"); 
+		layers |= 1 << LayerMask.NameToLayer ("SpecialWall1");
+		RaycastHit2D[] pathCheck = Physics2D.CircleCastAll (transform.position, colliderRadius, dir, currJumpDistance, layers);
 
 		if (pathCheck != null)
 		{

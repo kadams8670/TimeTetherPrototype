@@ -13,6 +13,7 @@ public class SaveStateManager : Singleton<SaveStateManager>
 
 		// Other struct types
 		public TimedSimpleSwitchData[] timedSimpleSwitchData; 
+		public GuardData[] guardData; 
 
 		// LevelStateManager data
 		public int playerNumKeys; 
@@ -40,7 +41,12 @@ public class SaveStateManager : Singleton<SaveStateManager>
 		public float useTimer; 
 	}
 
-
+	[System.Serializable]
+	public struct GuardData
+	{
+		public EnemyAI_Patrol enemyAI_Patrol; 
+		public bool hasTarget;
+	}
 
 
 
@@ -254,6 +260,18 @@ public class SaveStateManager : Singleton<SaveStateManager>
 		}
 
 
+		// Do something similar for guard data
+		EnemyAI_Patrol[] gd = levelParent.GetComponentsInChildren<EnemyAI_Patrol>(); 
+
+		writeState.guardData = new GuardData[gd.Length]; 
+
+		for (int i = 0; i < gd.Length; i++)
+		{
+			writeState.guardData[i] = new GuardData (); 
+			writeState.guardData[i].enemyAI_Patrol = gd[i]; 
+			writeState.guardData[i].hasTarget = gd[i].hasTarget; 
+		}
+
 
 
 		// LevelStateManager data
@@ -289,6 +307,12 @@ public class SaveStateManager : Singleton<SaveStateManager>
 		{
 			t.timedSimpleSwitch.activated = t.activated; 
 			t.timedSimpleSwitch.useTimer = t.useTimer; 
+		}
+
+		// Reset guard data
+		foreach (GuardData g in readState.guardData)
+		{
+			g.enemyAI_Patrol.hasTarget = g.hasTarget; 
 		}
 
 		// LevelStateManager data
