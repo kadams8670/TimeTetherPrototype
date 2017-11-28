@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAI_Patrol : MonoBehaviour
+public class BetterEnemyAI_Patrol : MonoBehaviour
 {
+	enum GuardStateMachine {Patrol, Chase, Wander};
 
 	public Transform[] patrolPoints;
 	public float Speed;
 	Transform currentPatrolPoint;
 	int currentPatrolIndex;
 	GuardAI otherAI;
-	SaveStateManager stateSaver;
 
 	public bool canLoop;
 	public bool isWandering;
@@ -19,7 +19,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 	public bool isOscillating;
 	public bool teleportMovement;
 	public bool doesTriggerSecurity;
-	public bool hasTarget = false;
+	public bool hasTarget;
 	public float wanderTime;
 	public float timer;
 	private float wanderPointTimer;
@@ -40,34 +40,47 @@ public class EnemyAI_Patrol : MonoBehaviour
 
 	void Start()
 	{
+
 		wanderTarget = Vector3.zero;
 		otherAI = gameObject.GetComponent<GuardAI> ();
 		currentPatrolIndex = 0;
 		currentPatrolPoint = patrolPoints[currentPatrolIndex];
 		StartCoroutine(RotateObject(rotateGuardAngle, Vector3.forward, rotateGuardSpeed));
 	}
+	void Awake()
+	{
+		GuardStateMachine myGuardStates;
+
+		//myGuardStates = Patrol ();
+	}
+
+	/*
+	GuardStateMachine PatrolState (GuardStateMachine stateAI)
+	{
+		if (stateAI == GuardStateMachine.Patrol)
+			stateAI = GuardStateMachine.Patrol;
+		else if (stateAI = GuardStateMachine.Chase)
+			stateAI = GuardStateMachine.Chase;
+		else if (stateAI = GuardStateMachine.Wander)
+			stateAI = GuardStateMachine.Wander;
+		
+		return stateAI;
+	}*/
 
 	// Update is called once per frame
 	void Update()
 	{
+
 		if (isOscillating == true) 
 			Speed = 0f;
 
-
-		if (otherAI.hasTarget == true) 
-		{
+		if (otherAI.hasTarget) {
 			isChasing = true;
 			isOscillating = false;
 			if (doesTriggerSecurity == true) {
 				Temp_LevelStateManager.inst.securityAlertActive = true;
 			}	
 		}
-
-		if (Input.GetKeyDown (KeyCode.Comma)) {
-			otherAI.hasTarget = false;
-			isChasing = false;
-		}
-			
 
 
  		if (isChasing && !otherAI.hasTarget) 
