@@ -18,6 +18,7 @@ public class EnemyAI_Patrol : MonoBehaviour
 	public bool isOscillating;
 	public bool teleportMovement;
 	public bool doesTriggerSecurity;
+	public bool hasTarget;
 	public float wanderTime;
 	public float timer;
 	private float wanderPointTimer;
