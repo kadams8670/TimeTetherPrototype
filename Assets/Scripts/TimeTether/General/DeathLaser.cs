@@ -15,8 +15,8 @@ public class DeathLaser : MonoBehaviour
 		else if (col.CompareTag("Guard"))
 		{ 
 			col.gameObject.GetComponent<GuardAI> ().KillGuard ();
-			if(isDestroyedByGuards)
-				gameObject.SetActive(false); 
+			if (isDestroyedByGuards)
+				gameObject.SetActive (false);
 		}
 	}
 }
